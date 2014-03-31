@@ -6,22 +6,22 @@ from numpy import *
 
 # Determinate the Hardness Ratio for a spectrum s1
 def det_hr(s1):
-    s1.ignore("**-0.5")
-    s1.ignore("2.0-**")
+    s1.ignore('**-0.5')
+    s1.ignore('2.0-**')
     s = s1.rate[0]*s1.exposure
-    s1.ignore("**-2.0")
-    s1.notice("2.0-8.0")
+    s1.ignore('**-2.0')
+    s1.notice('2.0-8.0')
     h = s1.rate[0]*s1.exposure
     HR = (h-s)/(h+s)
-    s1.notice("0.5-8.0")
+    s1.notice('0.5-8.0')
     errHR = sqrt((2*s*sqrt(h))**2+(2*h*sqrt(s))**2)/((h+s)**2)
     return HR, errHR
 
 
 # Get the column density of the Milky Way
 def getnh(ra, dec):
-    output = subprocess.check_output("nh equinox=2000 ra="+str(ra)+" dec="
-                                     + str(dec)+" | grep Weighted",
+    output = subprocess.check_output('nh equinox=2000 ra='+str(ra)+' dec='
+                                     + str(dec)+' | grep Weighted',
                                      shell=True)
     nhgal = float(output.split()[6])
     nhxspec = nhgal/10.**22
@@ -46,7 +46,7 @@ def plot_spec(ID, name, ra, dec, z):
     m = Model('phabs*zphabs*zpow')
 
     #Plotting setting
-    Plot.xAxis = "keV"
+    Plot.xAxis = 'keV'
     AllData.ignore('**-0.5, 8.0-**')
     if counts < 250:
         Plot.setRebin(0.1, 30)
@@ -64,8 +64,8 @@ def plot_spec(ID, name, ra, dec, z):
     m.zpowerlw.PhoIndex.values = [2, 0.01, 1.5, 1.7, 2.1, 2.3]
 
     #Fit
-    Fit.statMethod = "cstat 1"
-    Fit.query = "yes"
+    Fit.statMethod = 'cstat 1'
+    Fit.query = 'yes'
     Fit.nIterations = 50
     Fit.perform()
 
