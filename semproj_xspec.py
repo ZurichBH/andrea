@@ -4,6 +4,7 @@ import subprocess
 from numpy import *
 
 
+# Determinate the Hardness Ratio for a spectrum s1
 def det_hr(s1):
     s1.ignore("**-0.5")
     s1.ignore("2.0-**")
@@ -17,6 +18,7 @@ def det_hr(s1):
     return HR, errHR
 
 
+# Get the column density of the Milky Way
 def getnh(ra, dec):
     output = subprocess.check_output("nh equinox=2000 ra="+str(ra)+" dec="
                                      + str(dec)+" | grep Weighted",
@@ -26,6 +28,9 @@ def getnh(ra, dec):
     return nhgal, nhxspec
 
 
+# Plot the spectrum of the central source, with fit (zphabs*powerlw) and 
+# residuals and gives total counts, rate, hardness ratiom, column density,
+# photon index and reduced chi squared
 def plot_spec(ID, name, ra, dec, z):
 
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
@@ -93,6 +98,8 @@ def plot_spec(ID, name, ra, dec, z):
     return counts, rate, HR, errHR, nh, nherr, photon, photonerr, redchi
 
 
+# Plot the spectrum of the extended source, with fit (powerlw) and residuals
+# and gives total counts, rate, photon index and reduced chi squared
 def plot_spec_ext(ID, name, ra, dec, z):
 
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
@@ -153,6 +160,7 @@ def plot_spec_ext(ID, name, ra, dec, z):
     return counts, rate, photon, photonerr, redchi
 
 
+# Write a txt file with the output of the plot_spec function
 def output(ID, name, res):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/'
              + 'FS2014/Project/Outputs/')
@@ -172,6 +180,7 @@ def output(ID, name, res):
         f.write('\n')
 
 
+# Write a txt file with the output of the plot_spec_ext function
 def output_ext(ID, name, res_ext):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/'
              + 'FS2014/Project/Outputs/')
@@ -187,6 +196,7 @@ def output_ext(ID, name, res_ext):
         f.write('\n')
 
 
+# Gives the hardness ration for an Observation
 def HR(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/'
              + 'FS2014/Project/Data/'+ID[0:5]+'/repro')
@@ -196,6 +206,7 @@ def HR(ID):
     return HR, errHR
 
 
+# Gives the rate of the extended source
 def cps_ext(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/'
              + 'FS2014/Project/Data/'+ID[0:5]+'/repro')
@@ -205,6 +216,7 @@ def cps_ext(ID):
     return rate,  err_rate
 
 
+# Gives the rate of the central source
 def cps(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/'
              + 'FS2014/Project/Data/'+ID[0:5]+'/repro')
