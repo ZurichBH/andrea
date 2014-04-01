@@ -31,6 +31,28 @@ def coord_source(ID):
     return xpix,  ypix
 
 
+def convert_pix2sky(ID,xpix,ypix):
+    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
+                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
+                          + ID+'_repro_evt2.fits')
+    wcs = pywcs.WCS(hdulist[1].header)
+    tcrpx11 = hdulist[1].header['tcrpx11']
+    tcrpx12 = hdulist[1].header['tcrpx12']
+    tcdlt11 = hdulist[1].header['tcdlt11']
+    tcdlt12 = hdulist[1].header['tcdlt12']
+    tcrvl11 = hdulist[1].header['tcrvl11']
+    tcrvl12 = hdulist[1].header['tcrvl12']
+    tctyp11 = hdulist[1].header['tctyp11']
+    tctyp12 = hdulist[1].header['tctyp12']
+    wcs.wcs.crpix = [tcrpx11, tcrpx12]
+    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
+    wcs.wcs.crval = [tcrvl11, tcrvl12]
+    wcs.wcs.ctype = [tctyp11, tctyp12]
+    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
+    ra, dec = radec[0][0], radec[0][1]
+    return ra, dec
+
+
 def coord_source_1(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID + '/repro/')
@@ -104,24 +126,7 @@ def plot_xray(ID, z, dist, name):
                  weight='heavy', size='x-large', color='gray')
 
     xpix, ypix = coord_source(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[1].header)
-    tcrpx11 = hdulist[1].header['tcrpx11']
-    tcrpx12 = hdulist[1].header['tcrpx12']
-    tcdlt11 = hdulist[1].header['tcdlt11']
-    tcdlt12 = hdulist[1].header['tcdlt12']
-    tcrvl11 = hdulist[1].header['tcrvl11']
-    tcrvl12 = hdulist[1].header['tcrvl12']
-    tctyp11 = hdulist[1].header['tctyp11']
-    tctyp12 = hdulist[1].header['tctyp12']
-    wcs.wcs.crpix = [tcrpx11, tcrpx12]
-    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
-    wcs.wcs.crval = [tcrvl11, tcrvl12]
-    wcs.wcs.ctype = [tctyp11, tctyp12]
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
+    ra, dec = convert_pix2sky(ID,xpix,ypix)
 
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
@@ -165,24 +170,7 @@ def plot_xray_1(ID, z, dist, name):
                  weight='heavy', size='x-large', color='gray')
 
     xpix, ypix = coord_source_1(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[1].header)
-    tcrpx11 = hdulist[1].header['tcrpx11']
-    tcrpx12 = hdulist[1].header['tcrpx12']
-    tcdlt11 = hdulist[1].header['tcdlt11']
-    tcdlt12 = hdulist[1].header['tcdlt12']
-    tcrvl11 = hdulist[1].header['tcrvl11']
-    tcrvl12 = hdulist[1].header['tcrvl12']
-    tctyp11 = hdulist[1].header['tctyp11']
-    tctyp12 = hdulist[1].header['tctyp12']
-    wcs.wcs.crpix = [tcrpx11, tcrpx12]
-    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
-    wcs.wcs.crval = [tcrvl11, tcrvl12]
-    wcs.wcs.ctype = [tctyp11, tctyp12]
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
+    ra, dec = convert_pix2sky(ID,xpix,ypix)
 
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
@@ -226,24 +214,7 @@ def plot_xray_2(ID, z, dist, name):
                  weight='heavy', size='x-large', color='gray')
 
     xpix, ypix = coord_source_2(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[1].header)
-    tcrpx11 = hdulist[1].header['tcrpx11']
-    tcrpx12 = hdulist[1].header['tcrpx12']
-    tcdlt11 = hdulist[1].header['tcdlt11']
-    tcdlt12 = hdulist[1].header['tcdlt12']
-    tcrvl11 = hdulist[1].header['tcrvl11']
-    tcrvl12 = hdulist[1].header['tcrvl12']
-    tctyp11 = hdulist[1].header['tctyp11']
-    tctyp12 = hdulist[1].header['tctyp12']
-    wcs.wcs.crpix = [tcrpx11, tcrpx12]
-    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
-    wcs.wcs.crval = [tcrvl11, tcrvl12]
-    wcs.wcs.ctype = [tctyp11, tctyp12]
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
+    ra, dec = convert_pix2sky(ID,xpix,ypix)
 
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
@@ -280,24 +251,7 @@ def plot_optical(ID, z, dist, name):
     scale = scale.value
 
     xpix, ypix = coord_source(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[1].header)
-    tcrpx11 = hdulist[1].header['tcrpx11']
-    tcrpx12 = hdulist[1].header['tcrpx12']
-    tcdlt11 = hdulist[1].header['tcdlt11']
-    tcdlt12 = hdulist[1].header['tcdlt12']
-    tcrvl11 = hdulist[1].header['tcrvl11']
-    tcrvl12 = hdulist[1].header['tcrvl12']
-    tctyp11 = hdulist[1].header['tctyp11']
-    tctyp12 = hdulist[1].header['tctyp12']
-    wcs.wcs.crpix = [tcrpx11, tcrpx12]
-    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
-    wcs.wcs.crval = [tcrvl11, tcrvl12]
-    wcs.wcs.ctype = [tctyp11, tctyp12]
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
+    ra, dec = convert_pix2sky(ID,xpix,ypix)
 
     gc.show_circles(ra, dec, 1.5/3600.0, color='green', linewidth=2.0)
     ri = 2.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
@@ -342,24 +296,7 @@ def plot_optical_1(ID, z, dist, name):
     scale = scale.value
 
     xpix, ypix = coord_source_1(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[1].header)
-    tcrpx11 = hdulist[1].header['tcrpx11']
-    tcrpx12 = hdulist[1].header['tcrpx12']
-    tcdlt11 = hdulist[1].header['tcdlt11']
-    tcdlt12 = hdulist[1].header['tcdlt12']
-    tcrvl11 = hdulist[1].header['tcrvl11']
-    tcrvl12 = hdulist[1].header['tcrvl12']
-    tctyp11 = hdulist[1].header['tctyp11']
-    tctyp12 = hdulist[1].header['tctyp12']
-    wcs.wcs.crpix = [tcrpx11, tcrpx12]
-    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
-    wcs.wcs.crval = [tcrvl11, tcrvl12]
-    wcs.wcs.ctype = [tctyp11, tctyp12]
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
+    ra, dec = convert_pix2sky(ID,xpix,ypix)
 
     gc.show_circles(ra, dec, 1.5/3600.0, color='green', linewidth=2.0)
     ri = 2.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
@@ -404,24 +341,7 @@ def plot_optical_2(ID, z, dist, name):
     scale = scale.value
 
     xpix, ypix = coord_source_2(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[1].header)
-    tcrpx11 = hdulist[1].header['tcrpx11']
-    tcrpx12 = hdulist[1].header['tcrpx12']
-    tcdlt11 = hdulist[1].header['tcdlt11']
-    tcdlt12 = hdulist[1].header['tcdlt12']
-    tcrvl11 = hdulist[1].header['tcrvl11']
-    tcrvl12 = hdulist[1].header['tcrvl12']
-    tctyp11 = hdulist[1].header['tctyp11']
-    tctyp12 = hdulist[1].header['tctyp12']
-    wcs.wcs.crpix = [tcrpx11, tcrpx12]
-    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
-    wcs.wcs.crval = [tcrvl11, tcrvl12]
-    wcs.wcs.ctype = [tctyp11, tctyp12]
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
+    ra, dec = convert_pix2sky(ID,xpix,ypix)
 
     gc.show_circles(ra, dec, 1.5/3600.0, color='green', linewidth=2.0)
     ri = 2.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
