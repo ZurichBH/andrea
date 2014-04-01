@@ -28,7 +28,7 @@ def getnh(ra, dec):
     return nhgal, nhxspec
 
 
-# Plot the spectrum of the central source, with fit (zphabs*powerlw) and
+# Plot the spectrum of the central source, with fit (zphabs*powerlw) and 
 # residuals and gives total counts, rate, hardness ratiom, column density,
 # photon index and reduced chi squared
 def plot_spec(ID, name, ra, dec, z):
@@ -114,7 +114,7 @@ def plot_spec_ext(ID, name, ra, dec, z):
     m = Model('phabs*zpow')
 
     #Plotting setting
-    Plot.xAxis = "keV"
+    Plot.xAxis = 'keV'
     AllData.ignore('**-0.5, 8.0-**')
     if counts < 250:
         Plot.setRebin(0.1, 30)
@@ -130,8 +130,8 @@ def plot_spec_ext(ID, name, ra, dec, z):
     m.zpowerlw.Redshift = z
 
     #Fit
-    Fit.statMethod = "cstat 1"
-    Fit.query = "yes"
+    Fit.statMethod = 'cstat 1'
+    Fit.query = 'yes'
     Fit.nIterations = 50
     Fit.perform()
 
