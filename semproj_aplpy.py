@@ -8,6 +8,8 @@ import astropy.cosmology
 import astropy.units as u
 
 
+# Extract the physical coordinates from a region file, using the keyword "circle"
+# as a starting point for where the coordinates begins.
 def coord_source(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID+'/repro/')
@@ -30,6 +32,7 @@ def coord_source(ID):
     return xpix,  ypix
 
 
+# Same as coord_source, but for the first source in a double source
 def coord_source_1(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID + '/repro/')
@@ -52,6 +55,7 @@ def coord_source_1(ID):
     return xpix,  ypix
 
 
+# Same as coord_source, but for the second source in a double source
 def coord_source_2(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID + '/repro/')
