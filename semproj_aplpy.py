@@ -6,10 +6,9 @@ import pyfits
 import pywcs
 import astropy.cosmology
 import astropy.units as u
+from numpy import *
 
 
-# Extract the physical coordinates from a region file, using the keyword "circle"
-# as a starting point for where the coordinates begins.
 def coord_source(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID+'/repro/')
@@ -32,7 +31,6 @@ def coord_source(ID):
     return xpix,  ypix
 
 
-# Same as coord_source, but for the first source in a double source
 def coord_source_1(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID + '/repro/')
@@ -55,7 +53,6 @@ def coord_source_1(ID):
     return xpix,  ypix
 
 
-# Same as coord_source, but for the second source in a double source
 def coord_source_2(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID + '/repro/')
@@ -80,9 +77,9 @@ def coord_source_2(ID):
 
 def plot_xray(ID, z, dist, name):
     print ID
-    os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
-             + ID + '/repro/')
-    gc = aplpy.FITSFigure('aplpy_'+ID+'_0.5-8_flux.img')
+    gc = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+                          + 'Project/Data/'+ID+'/repro/aplpy_'+ID
+                          + '_0.5-8_flux.img')
     gc.show_colorscale(cmap='gist_heat', vmin=0, vmax=1.0e-07,
                        stretch='arcsinh', smooth=1)
     gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/'
@@ -111,17 +108,25 @@ def plot_xray(ID, z, dist, name):
                           + 'FS2014/Project/Data/'+ID+'/repro/acisf'
                           + ID+'_repro_evt2.fits')
     wcs = pywcs.WCS(hdulist[1].header)
-    print wcs.wcs.name
-    wcs.wcs.print_contents()
+    tcrpx11 = hdulist[1].header['tcrpx11']
+    tcrpx12 = hdulist[1].header['tcrpx12']
+    tcdlt11 = hdulist[1].header['tcdlt11']
+    tcdlt12 = hdulist[1].header['tcdlt12']
+    tcrvl11 = hdulist[1].header['tcrvl11']
+    tcrvl12 = hdulist[1].header['tcrvl12']
+    tctyp11 = hdulist[1].header['tctyp11']
+    tctyp12 = hdulist[1].header['tctyp12']
+    wcs.wcs.crpix = [tcrpx11, tcrpx12]
+    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
+    wcs.wcs.crval = [tcrvl11, tcrvl12]
+    wcs.wcs.ctype = [tctyp11, tctyp12]
     radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    print radec
     ra, dec = radec[0][0], radec[0][1]
-    print ra, dec
 
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
     gc.tick_labels.set_yformat('ddmmss')
-    gc.add_scalebar(10.0/3600.0)
+    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
     gc.add_colorbar()
     gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
     gc.scalebar.set_font(size='x-large', weight='heavy')
@@ -133,9 +138,9 @@ def plot_xray(ID, z, dist, name):
 
 def plot_xray_1(ID, z, dist, name):
     print ID
-    os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
-             + ID+'/repro/')
-    gc = aplpy.FITSFigure('aplpy_'+ID+'_0.5-8_flux.img')
+    gc = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+                          + 'Project/Data/'+ID+'/repro/aplpy_'+ID
+                          + '_0.5-8_flux.img')
     gc.show_colorscale(cmap='gist_heat', vmin=0, vmax=1.0e-07,
                        stretch='arcsinh', smooth=1)
     gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/'
@@ -156,21 +161,33 @@ def plot_xray_1(ID, z, dist, name):
 
     scale = 10.0*u.kpc/astropy.cosmology.arcsec_per_kpc_comoving(z)
     scale = scale.value
-    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'\n'+name, relative=True,
+    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'_1\n'+name, relative=True,
                  weight='heavy', size='x-large', color='gray')
 
-    xpix, ypix = coord_source(ID)
+    xpix, ypix = coord_source_1(ID)
     hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
                           + 'FS2014/Project/Data/'+ID+'/repro/acisf'
                           + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[0].header)
+    wcs = pywcs.WCS(hdulist[1].header)
+    tcrpx11 = hdulist[1].header['tcrpx11']
+    tcrpx12 = hdulist[1].header['tcrpx12']
+    tcdlt11 = hdulist[1].header['tcdlt11']
+    tcdlt12 = hdulist[1].header['tcdlt12']
+    tcrvl11 = hdulist[1].header['tcrvl11']
+    tcrvl12 = hdulist[1].header['tcrvl12']
+    tctyp11 = hdulist[1].header['tctyp11']
+    tctyp12 = hdulist[1].header['tctyp12']
+    wcs.wcs.crpix = [tcrpx11, tcrpx12]
+    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
+    wcs.wcs.crval = [tcrvl11, tcrvl12]
+    wcs.wcs.ctype = [tctyp11, tctyp12]
     radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
     ra, dec = radec[0][0], radec[0][1]
 
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
     gc.tick_labels.set_yformat('ddmmss')
-    gc.add_scalebar(10.0/3600.0)
+    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
     gc.add_colorbar()
     gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
     gc.scalebar.set_font(size='x-large', weight='heavy')
@@ -182,9 +199,9 @@ def plot_xray_1(ID, z, dist, name):
 
 def plot_xray_2(ID, z, dist, name):
     print ID
-    os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
-             + ID+'/repro/')
-    gc = aplpy.FITSFigure('aplpy_'+ID+'_0.5-8_flux.img')
+    gc = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+                          + 'Project/Data/'+ID+'/repro/aplpy_'+ID
+                          + '_0.5-8_flux.img')
     gc.show_colorscale(cmap='gist_heat', vmin=0, vmax=1.0e-07,
                        stretch='arcsinh', smooth=1)
     gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/'
@@ -205,21 +222,33 @@ def plot_xray_2(ID, z, dist, name):
 
     scale = 10.0*u.kpc/astropy.cosmology.arcsec_per_kpc_comoving(z)
     scale = scale.value
-    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'\n'+name, relative=True,
+    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'_2\n'+name, relative=True,
                  weight='heavy', size='x-large', color='gray')
 
-    xpix, ypix = coord_source(ID)
+    xpix, ypix = coord_source_2(ID)
     hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
                           + 'FS2014/Project/Data/'+ID+'/repro/acisf'
                           + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[0].header)
+    wcs = pywcs.WCS(hdulist[1].header)
+    tcrpx11 = hdulist[1].header['tcrpx11']
+    tcrpx12 = hdulist[1].header['tcrpx12']
+    tcdlt11 = hdulist[1].header['tcdlt11']
+    tcdlt12 = hdulist[1].header['tcdlt12']
+    tcrvl11 = hdulist[1].header['tcrvl11']
+    tcrvl12 = hdulist[1].header['tcrvl12']
+    tctyp11 = hdulist[1].header['tctyp11']
+    tctyp12 = hdulist[1].header['tctyp12']
+    wcs.wcs.crpix = [tcrpx11, tcrpx12]
+    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
+    wcs.wcs.crval = [tcrvl11, tcrvl12]
+    wcs.wcs.ctype = [tctyp11, tctyp12]
     radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
     ra, dec = radec[0][0], radec[0][1]
 
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
     gc.tick_labels.set_yformat('ddmmss')
-    gc.add_scalebar(10.0/3600.0)
+    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
     gc.add_colorbar()
     gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
     gc.scalebar.set_font(size='x-large', weight='heavy')
@@ -231,16 +260,9 @@ def plot_xray_2(ID, z, dist, name):
 
 def plot_optical(ID, z, dist, name):
     print ID
-    gc = aplpy.FITSFigure(ID+'_optical.fits')
+    gc = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+                          + 'Project/Optical/'+ID+'_optical.fits')
     gc.show_grayscale()
-
-    xpix, ypix = coord_source(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[0].header)
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
 
     gc.add_label(0.20, 0.1, 'ObsID: '+ID+'\n'+name, relative=True,
                  weight='heavy', size='x-large', color='gray')
@@ -257,10 +279,38 @@ def plot_optical(ID, z, dist, name):
     scale = 10.0*u.kpc/astropy.cosmology.arcsec_per_kpc_comoving(z)
     scale = scale.value
 
+    xpix, ypix = coord_source(ID)
+    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
+                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
+                          + ID+'_repro_evt2.fits')
+    wcs = pywcs.WCS(hdulist[1].header)
+    tcrpx11 = hdulist[1].header['tcrpx11']
+    tcrpx12 = hdulist[1].header['tcrpx12']
+    tcdlt11 = hdulist[1].header['tcdlt11']
+    tcdlt12 = hdulist[1].header['tcdlt12']
+    tcrvl11 = hdulist[1].header['tcrvl11']
+    tcrvl12 = hdulist[1].header['tcrvl12']
+    tctyp11 = hdulist[1].header['tctyp11']
+    tctyp12 = hdulist[1].header['tctyp12']
+    wcs.wcs.crpix = [tcrpx11, tcrpx12]
+    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
+    wcs.wcs.crval = [tcrvl11, tcrvl12]
+    wcs.wcs.ctype = [tctyp11, tctyp12]
+    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
+    ra, dec = radec[0][0], radec[0][1]
+
+    gc.show_circles(ra, dec, 1.5/3600.0, color='green', linewidth=2.0)
+    ri = 2.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    ri = ri.value
+    ro = 4.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    ro = ro.value
+    gc.show_circles(ra, dec, ri/3600.0, color='cyan', linewidth=2.0)
+    gc.show_circles(ra, dec, ro/3600.0, color='cyan', linewidth=2.0)
+
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
     gc.tick_labels.set_yformat('ddmmss')
-    gc.add_scalebar(10.0/3600.0)
+    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
 
     gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
     gc.scalebar.set_font(size='x-large', weight='heavy')
@@ -272,18 +322,11 @@ def plot_optical(ID, z, dist, name):
 
 def plot_optical_1(ID, z, dist, name):
     print ID
-    gc = aplpy.FITSFigure(ID+'_optical.fits')
+    gc = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+                          + 'Project/Optical/'+ID+'_optical.fits')
     gc.show_grayscale()
 
-    xpix, ypix = coord_source(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[0].header)
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
-
-    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'\n'+name, relative=True,
+    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'_1\n'+name, relative=True,
                  weight='heavy', size='x-large', color='gray')
 
     radius = dist*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
@@ -298,10 +341,38 @@ def plot_optical_1(ID, z, dist, name):
     scale = 10.0*u.kpc/astropy.cosmology.arcsec_per_kpc_comoving(z)
     scale = scale.value
 
+    xpix, ypix = coord_source_1(ID)
+    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
+                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
+                          + ID+'_repro_evt2.fits')
+    wcs = pywcs.WCS(hdulist[1].header)
+    tcrpx11 = hdulist[1].header['tcrpx11']
+    tcrpx12 = hdulist[1].header['tcrpx12']
+    tcdlt11 = hdulist[1].header['tcdlt11']
+    tcdlt12 = hdulist[1].header['tcdlt12']
+    tcrvl11 = hdulist[1].header['tcrvl11']
+    tcrvl12 = hdulist[1].header['tcrvl12']
+    tctyp11 = hdulist[1].header['tctyp11']
+    tctyp12 = hdulist[1].header['tctyp12']
+    wcs.wcs.crpix = [tcrpx11, tcrpx12]
+    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
+    wcs.wcs.crval = [tcrvl11, tcrvl12]
+    wcs.wcs.ctype = [tctyp11, tctyp12]
+    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
+    ra, dec = radec[0][0], radec[0][1]
+
+    gc.show_circles(ra, dec, 1.5/3600.0, color='green', linewidth=2.0)
+    ri = 2.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    ri = ri.value
+    ro = 4.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    ro = ro.value
+    gc.show_circles(ra, dec, ri/3600.0, color='cyan', linewidth=2.0)
+    gc.show_circles(ra, dec, ro/3600.0, color='cyan', linewidth=2.0)
+
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
     gc.tick_labels.set_yformat('ddmmss')
-    gc.add_scalebar(10.0/3600.0)
+    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
 
     gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
     gc.scalebar.set_font(size='x-large', weight='heavy')
@@ -313,18 +384,11 @@ def plot_optical_1(ID, z, dist, name):
 
 def plot_optical_2(ID, z, dist, name):
     print ID
-    gc = aplpy.FITSFigure(ID+'_optical.fits')
+    gc = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+                          + 'Project/Optical/'+ID+'_optical.fits')
     gc.show_grayscale()
 
-    xpix, ypix = coord_source(ID)
-    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
-                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
-                          + ID+'_repro_evt2.fits')
-    wcs = pywcs.WCS(hdulist[0].header)
-    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
-    ra, dec = radec[0][0], radec[0][1]
-
-    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'\n'+name, relative=True,
+    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'_2\n'+name, relative=True,
                  weight='heavy', size='x-large', color='gray')
 
     radius = dist*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
@@ -339,10 +403,38 @@ def plot_optical_2(ID, z, dist, name):
     scale = 10.0*u.kpc/astropy.cosmology.arcsec_per_kpc_comoving(z)
     scale = scale.value
 
+    xpix, ypix = coord_source_2(ID)
+    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
+                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
+                          + ID+'_repro_evt2.fits')
+    wcs = pywcs.WCS(hdulist[1].header)
+    tcrpx11 = hdulist[1].header['tcrpx11']
+    tcrpx12 = hdulist[1].header['tcrpx12']
+    tcdlt11 = hdulist[1].header['tcdlt11']
+    tcdlt12 = hdulist[1].header['tcdlt12']
+    tcrvl11 = hdulist[1].header['tcrvl11']
+    tcrvl12 = hdulist[1].header['tcrvl12']
+    tctyp11 = hdulist[1].header['tctyp11']
+    tctyp12 = hdulist[1].header['tctyp12']
+    wcs.wcs.crpix = [tcrpx11, tcrpx12]
+    wcs.wcs.cdelt = array([tcdlt11, tcdlt12])
+    wcs.wcs.crval = [tcrvl11, tcrvl12]
+    wcs.wcs.ctype = [tctyp11, tctyp12]
+    radec = wcs.wcs_pix2sky([[xpix, ypix]], 0)
+    ra, dec = radec[0][0], radec[0][1]
+
+    gc.show_circles(ra, dec, 1.5/3600.0, color='green', linewidth=2.0)
+    ri = 2.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    ri = ri.value
+    ro = 4.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    ro = ro.value
+    gc.show_circles(ra, dec, ri/3600.0, color='cyan', linewidth=2.0)
+    gc.show_circles(ra, dec, ro/3600.0, color='cyan', linewidth=2.0)
+
     gc.recenter(ra, dec, radius=radius/3600.0)
     gc.tick_labels.set_xformat('ddmmss')
     gc.tick_labels.set_yformat('ddmmss')
-    gc.add_scalebar(10.0/3600.0)
+    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
 
     gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
     gc.scalebar.set_font(size='x-large', weight='heavy')
