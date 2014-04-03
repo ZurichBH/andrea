@@ -28,7 +28,7 @@ def getnh(ra, dec):
     return nhgal, nhxspec
 
 
-# Plot the spectrum of the central source, with fit (zphabs*powerlw) and 
+# Plot the spectrum of the central source, with fit (zphabs*powerlw) and
 # residuals and gives total counts, rate, hardness ratiom, column density,
 # photon index and reduced chi squared
 def plot_spec(ID, name, ra, dec, z):
