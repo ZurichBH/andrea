@@ -3,6 +3,8 @@ import subprocess
 from ciao_contrib.runtool import *
 
 
+# Convert the event FITS file into a fluximage, in order to use it to plot the
+# x-ray image
 def img(ID):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID + '/repro/')
@@ -10,6 +12,7 @@ def img(ID):
               ' bands=0.5:8:3 binsize=1')
 
 
+# Create the spectrum for the source region
 def spec(ID, double):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID + '/repro/')
@@ -41,6 +44,7 @@ def spec(ID, double):
         os.system('specextract')
 
 
+# Create the spectrum for the extended source region
 def spec_ext(ID, double):
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID + '/repro/')
@@ -72,6 +76,8 @@ def spec_ext(ID, double):
         os.system('specextract')
 
 
+# Run the deflare script on the event file for a single source, excluding the
+# source region
 def deflareobs(evt_file, fov_file):
     dmcopy(infile=evt_file + '[energy=500:7000,ccd_id=7,'
            + 'sky=region('+fov_file+'[ccd_id=7])]', outfile='evt2_c7.fits',
@@ -87,6 +93,8 @@ def deflareobs(evt_file, fov_file):
     return
 
 
+# Run the deflare script on the event file for a double source, excluding the
+# source_1 region, which is the brightest
 def deflareobs_double(evt_file, fov_file):
     dmcopy(infile=evt_file+'[energy=500:7000,ccd_id=7,' + 'sky=region('
            + fov_file + '[ccd_id=7])]', outfile='evt2_c7.fits', clobber='yes')
