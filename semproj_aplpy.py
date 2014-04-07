@@ -194,3 +194,10 @@ def area_spec(ID, z):
     area = area/(astropy.cosmology.arcsec_per_kpc_comoving(z)**2)
     area = float(area/u.kpc**2)
     return area
+
+
+def exptime(ID):
+    hdulist = pyfits.open('/Users/andyscanzio/Documents/ETH/Semestri/'
+                          + 'FS2014/Project/Data/'+ID+'/repro/acisf'
+                          + ID+'_repro_evt2.fits')
+    return hdulist[1].header['EXPTIME']
