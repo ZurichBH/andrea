@@ -7,6 +7,46 @@ import pywcs
 import astropy.cosmology
 import astropy.units as u
 from numpy import *
+from matplotlib.pyplot import *
+
+
+def opt_regions(gc, ID, double, z):
+    xpix, ypix = coord_source(ID, double)
+    ra, dec = convert_pix2sky(ID, xpix, ypix)
+
+    ri = 2.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    ri = ri.value
+    ro = 4.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    ro = ro.value
+    if double == 2:
+        gc.show_circles(ra, dec, 1.5/3600.0, color='blue', linewidth=2.0)
+        gc.show_circles(ra, dec, ri/3600.0, color='magenta', linewidth=2.0)
+        gc.show_circles(ra, dec, ro/3600.0, color='magenta', linewidth=2.0)
+    else:
+        gc.show_circles(ra, dec, 1.5/3600.0, color='green', linewidth=2.0)
+        gc.show_circles(ra, dec, ri/3600.0, color='cyan', linewidth=2.0)
+        gc.show_circles(ra, dec, ro/3600.0, color='cyan', linewidth=2.0)
+
+
+def settings(gc, ID, name, z, ra, dec, dist):
+    radius = dist*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
+    radius = radius.value
+    if radius < 15.0:
+        radius = 15.0
+    elif radius > 225.0:
+        radius = 225.0
+    radius += 15.0
+
+    scale = 10.0*u.kpc/astropy.cosmology.arcsec_per_kpc_comoving(z)
+    scale = scale.value
+
+    gc.recenter(ra, dec, radius=radius/3600.0)
+    gc.tick_labels.set_xformat('ddmmss')
+    gc.tick_labels.set_yformat('ddmmss')
+    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
+    gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
+    gc.scalebar.set_font(size='x-large', weight='heavy')
+    gc.scalebar.set_color('gray')
 
 
 # Extract the coordinate stored in the region file, double is a integer and
@@ -65,124 +105,52 @@ def convert_pix2sky(ID, xpix, ypix):
     return ra, dec
 
 
-# Plot the x-ray image, including the source, extended source and backgorund
-# regions, the radius of the image is set so that the two galaxies are in the
-# frame (with min = 65.0 and max = 155.0), double is used in the same way as
-# in coord_source
-def plot_xray(ID, double, z, dist, name):
+def plot_images(ID, double, z, dist, name):
     print ID
-    gc = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+
+    fig = figure(figsize=(20, 10))
+    f1 = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
                           + 'Project/Data/'+ID+'/repro/aplpy_'+ID
-                          + '_0.5-8_flux.img')
-    gc.show_colorscale(cmap='gist_heat', vmin=0, vmax=1.0e-07,
+                          + '_0.5-8_flux.img', figure=fig, subplot=(1, 2, 1))
+    f1.show_colorscale(cmap='gist_heat', vmin=0, pmax=99.9,
                        stretch='arcsinh', smooth=1)
     if double == 0:
-        gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+        f1.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
                         + 'Project/Data/'+ID+'/repro/source.reg')
-        gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+        f1.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
                         + 'Project/Data/'+ID+'/repro/source_ext.reg')
     elif double == 1:
-        gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+        f1.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
                         + 'Project/Data/'+ID+'/repro/source_1.reg')
-        gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+        f1.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
                         + 'Project/Data/'+ID+'/repro/source_1_ext.reg')
-    elif double == 2:
-        gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+        f1.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
                         + 'Project/Data/'+ID+'/repro/source_2.reg')
-        gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+        f1.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
                         + 'Project/Data/'+ID+'/repro/source_2_ext.reg')
-    gc.show_regions('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/'
-                    + 'Data/'+ID+'/repro/back.reg')
-
-    radius = dist*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
-    radius = radius.value
-    print radius
-    if radius < 60.0:
-        radius = 60.0
-    elif radius > 150.0:
-        radius = 150.0
-    radius += 5.0
-
-    scale = 10.0*u.kpc/astropy.cosmology.arcsec_per_kpc_comoving(z)
-    scale = scale.value
-    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'\n'+name, relative=True,
-                 weight='heavy', size='x-large', color='gray')
 
     xpix, ypix = coord_source(ID, double)
     ra, dec = convert_pix2sky(ID, xpix, ypix)
 
-    gc.recenter(ra, dec, radius=radius/3600.0)
-    gc.tick_labels.set_xformat('ddmmss')
-    gc.tick_labels.set_yformat('ddmmss')
-    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
-    gc.add_colorbar()
-    gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
-    gc.scalebar.set_font(size='x-large', weight='heavy')
-    gc.scalebar.set_color('gray')
-    if double == 0:
-        gc.save('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
-                + 'Project/Images/'+ID+'_xray.eps')
-    elif double == 1:
-        gc.save('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
-                + 'Project/Images/'+ID+'_1_xray.eps')
-    elif double == 2:
-        gc.save('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
-                + 'Project/Images/'+ID+'_2_xray.eps')
-    gc.close()
+    settings(f1, ID, name, z, ra, dec, dist)
 
+    f2 = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+                          + 'Project/Optical/'+ID+'_optical.fits', figure=fig,
+                          subplot=(1, 2, 2))
+    f2.show_grayscale(stretch='arcsinh', pmax=99.9)
 
-# Plot the optical image with source and extended source regions, using the
-# same settings as plot_xray
-def plot_optical(ID, double, z, dist, name):
-    print ID
-    gc = aplpy.FITSFigure('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
-                          + 'Project/Optical/'+ID+'_optical.fits')
-    gc.show_grayscale()
+    opt_regions(f2, ID, double, z)
+    if double == 1:
+        opt_regions(f2, ID, 2, z)
 
-    gc.add_label(0.20, 0.1, 'ObsID: '+ID+'\n'+name, relative=True,
-                 weight='heavy', size='x-large', color='gray')
+    settings(f2, ID, name, z, ra, dec, dist)
 
-    radius = dist*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
-    radius = radius.value
-    print radius
-    if radius < 60.0:
-        radius = 60.0
-    elif radius > 150.0:
-        radius = 150.0
-    radius += 5.0
+    suptitle(ID+' - '+name, size='xx-large', weight='heavy')
+    fig.text(0.285, 0.87, 'X-ray', size='large', weight='bold')
+    fig.text(0.715, 0.87, 'Optical', size='large', weight='bold')
 
-    scale = 10.0*u.kpc/astropy.cosmology.arcsec_per_kpc_comoving(z)
-    scale = scale.value
-
-    xpix, ypix = coord_source(ID, double)
-    ra, dec = convert_pix2sky(ID, xpix, ypix)
-
-    gc.show_circles(ra, dec, 1.5/3600.0, color='green', linewidth=2.0)
-    ri = 2.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
-    ri = ri.value
-    ro = 4.0*u.kpc*astropy.cosmology.arcsec_per_kpc_comoving(z)/u.arcsec
-    ro = ro.value
-    gc.show_circles(ra, dec, ri/3600.0, color='cyan', linewidth=2.0)
-    gc.show_circles(ra, dec, ro/3600.0, color='cyan', linewidth=2.0)
-
-    gc.recenter(ra, dec, radius=radius/3600.0)
-    gc.tick_labels.set_xformat('ddmmss')
-    gc.tick_labels.set_yformat('ddmmss')
-    gc.add_scalebar(10.0/3600.0, linewidth=3.0)
-
-    gc.scalebar.set_label('10.0"/'+str(scale)[0:4]+' kpc')
-    gc.scalebar.set_font(size='x-large', weight='heavy')
-    gc.scalebar.set_color('gray')
-    if double == 0:
-        gc.save('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/'
-                + 'Images/'+ID+'_optical.eps')
-    elif double == 1:
-        gc.save('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/'
-                + 'Images/'+ID+'_1_optical.eps')
-    elif double == 2:
-        gc.save('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/'
-                + 'Images/'+ID+'_2_optical.eps')
-    gc.close()
+    fig.savefig('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/'
+                + 'Project/Images/'+ID+'_images.eps')
 
 
 # Calculate the physical area in kpc of the extended source region

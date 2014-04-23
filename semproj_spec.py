@@ -18,7 +18,7 @@ def spec(ID, double):
              + ID + '/repro/')
     if ID in double:
         os.system('punlearn specextract')
-        os.system('pset specextract infile="evt2_df_ccd7.fits"'
+        os.system('pset specextract infile="evt2_df_ccd7.fits'
                   + '[sky=region(source_1.reg)]"')
         os.system('pset specextract outroot='+ID+'_1_spec')
         os.system('pset specextract bkgfile="evt2_df_ccd7.fits'

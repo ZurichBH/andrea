@@ -31,7 +31,7 @@ def getnh(ra, dec):
 # Plot the spectrum of the central source, with fit (zphabs*powerlw) and
 # residuals and gives total counts, rate, hardness ratiom, column density,
 # photon index and reduced chi squared
-def plot_spec(ID, name, ra, dec, z):
+def plot_spec(ID, name, ra, dec, z, frtime):
 
     os.chdir('/Users/andyscanzio/Documents/ETH/Semestri/FS2014/Project/Data/'
              + ID[0:5]+'/repro')
@@ -43,13 +43,13 @@ def plot_spec(ID, name, ra, dec, z):
     HR, errHR = det_hr(s)
 
     #Set model
-    m = Model('phabs*zphabs*zpow')
+    m = Model('phabs*zphabs*pileup*(zpow+zgauss)')
 
     #Plotting setting
     Plot.xAxis = 'keV'
     AllData.ignore('**-0.5, 8.0-**')
     if counts < 250:
-        Plot.setRebin(0.1, 30)
+        Plot.setRebin(0.01, 30)
     else:
         Plot.setRebin(10, 30)
 
@@ -59,9 +59,27 @@ def plot_spec(ID, name, ra, dec, z):
     #Parameters
     m.phabs.nH = nhxspec
     m.phabs.nH.frozen = True
+
     m.zphabs.Redshift = z
+    m.zphabs.nH = [1, 0.01, 0.01, 0.1, 10, 100]
+
     m.zpowerlw.Redshift = z
-    m.zpowerlw.PhoIndex.values = [2, 0.01, 1.5, 1.7, 2.1, 2.3]
+    m.zpowerlw.PhoIndex.values = [2, 0.01, 1.2, 1.7, 2.1, 2.5]
+
+    m.pileup.fr_time = frtime
+    m.pileup.fr_time.frozen = True
+    m.pileup.max_ph = 5
+    m.pileup.max_ph.frozen = True
+    m.pileup.psffrac = 0.95
+    m.pileup.psffrac.frozen = True
+    m.pileup.nregions = 1
+    m.pileup.nregions.frozen = True
+
+    m.zgauss.LineE = 6.40
+    m.zgauss.LineE.frozen = True
+    m.zgauss.Redshift = z
+    m.zgauss.Sigma = 0.2
+    m.zgauss.Sigma.frozen = True
 
     #Fit
     Fit.statMethod = 'cstat 1'
@@ -86,8 +104,8 @@ def plot_spec(ID, name, ra, dec, z):
     stuff = 'label f \"'+NH+'\n'+phot+'\n'+hr+'\n'+chi
 
     #Plot
-    Plot.device = '/Users/andyscanzio/Documents/ETH/Semestri/'
-    +'FS2014/Project/Plots/'+ID+'_counts.ps/cps'
+    Plot.device = '/Users/andyscanzio/Documents/ETH/Semestri/'\
+                  'FS2014/Project/Plots/'+ID+'_counts.ps/cps'
     Plot.addCommand(title)
     Plot.addCommand(stuff)
     Plot('ldata residuals')
@@ -148,8 +166,8 @@ def plot_spec_ext(ID, name, ra, dec, z):
     stuff = 'label f \"'+phot+'\n'+chi
 
     #Plot
-    Plot.device = '/Users/andyscanzio/Documents/ETH/Semestri/'
-    + 'FS2014/Project/Plots/'+ID+'_counts_ext.ps/cps'
+    Plot.device = '/Users/andyscanzio/Documents/ETH/Semestri/'\
+                  'FS2014/Project/Plots/'+ID+'_counts_ext.ps/cps'
     Plot.addCommand(title)
     Plot.addCommand(stuff)
     Plot('ldata residuals')
